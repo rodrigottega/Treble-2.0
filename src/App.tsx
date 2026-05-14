@@ -42,11 +42,27 @@ import {
   initialHumanHandoffRules
 } from "./data/aiCenter";
 
+import { AdminLayout } from "./components/admin/AdminLayout";
+import { AdminSidebar } from "./components/admin/AdminSidebar";
+import { AgentsPage } from "./components/admin/agents/AgentsPage";
+import { TeamsPage } from "./components/admin/teams/TeamsPage";
+import { AssignmentRulesPage } from "./components/admin/assignment-rules/AssignmentRulesPage";
+
+import { AdminSection, AdminAgent, AdminTeam, AssignmentRule } from "./types/admin";
+import { initialAdminAgents, initialAdminTeams, initialAssignmentRules } from "./data/admin";
+
+import { SettingsLayout } from "./components/settings/SettingsLayout";
+import { SettingsSidebar } from "./components/settings/SettingsSidebar";
+import { PricingPlansPage } from "./components/settings/PricingPlansPage";
+import { SettingsSection } from "./types/settings";
+
 export default function App() {
-  const [activeMainSection, setActiveMainSection] = React.useState<"inbox" | "channels" | "metrics" | "contacts" | "ai_center">("inbox");
+  const [activeMainSection, setActiveMainSection] = React.useState<"inbox" | "channels" | "metrics" | "contacts" | "ai_center" | "admin" | "settings">("inbox");
   const [activeChannelConfig, setActiveChannelConfig] = React.useState<"whatsapp" | "instagram">("whatsapp");
   const [activeMetricsSection, setActiveMetricsSection] = React.useState<MetricsSection>("general");
   const [activeAiCenterSection, setActiveAiCenterSection] = React.useState<AiCenterSection>("orchestrator");
+  const [activeAdminSection, setActiveAdminSection] = React.useState<AdminSection>("agents");
+  const [activeSettingsSection, setActiveSettingsSection] = React.useState<SettingsSection>("pricing_plans");
 
   // AI Center Data
   const [orchConfig, setOrchConfig] = React.useState<OrchestratorConfig>(initialOrchestratorConfig);
@@ -59,6 +75,10 @@ export default function App() {
 
   // Focus and Selection for sub-agents
   const [selectedSubAgent, setSelectedSubAgent] = React.useState<SubAgent | null>(null);
+
+  const [adminAgents, setAdminAgents] = React.useState<AdminAgent[]>(initialAdminAgents);
+  const [adminTeams, setAdminTeams] = React.useState<AdminTeam[]>(initialAdminTeams);
+  const [adminAssignmentRules, setAdminAssignmentRules] = React.useState<AssignmentRule[]>(initialAssignmentRules);
 
   const [conversations, setConversations] = React.useState<Conversation[]>(dummyConversations);
   const [selectedId, setSelectedId] = React.useState<string | null>(dummyConversations[0].id);
@@ -363,7 +383,7 @@ export default function App() {
           activeMainSection={activeMainSection}
           onMainSectionChange={setActiveMainSection}
         />
-      ) : (
+      ) : activeMainSection === "ai_center" ? (
         <AiCenterLayout
           activeMainSection={activeMainSection}
           onMainSectionChange={setActiveMainSection}
@@ -406,6 +426,40 @@ export default function App() {
                 subAgents={subAgents}
               />
             )
+          }
+        />
+      ) : activeMainSection === "admin" ? (
+        <AdminLayout
+          activeMainSection={activeMainSection}
+          onMainSectionChange={setActiveMainSection}
+          sidebarSlot={
+            <AdminSidebar 
+              activeSection={activeAdminSection}
+              onSectionChange={setActiveAdminSection}
+            />
+          }
+          contentSlot={
+            activeAdminSection === "agents" ? (
+              <AgentsPage agents={adminAgents} setAgents={setAdminAgents} teams={adminTeams} />
+            ) : activeAdminSection === "teams" ? (
+              <TeamsPage teams={adminTeams} setTeams={setAdminTeams} agents={adminAgents} setAgents={setAdminAgents} />
+            ) : (
+              <AssignmentRulesPage rules={adminAssignmentRules} setRules={setAdminAssignmentRules} agents={adminAgents} teams={adminTeams} />
+            )
+          }
+        />
+      ) : (
+        <SettingsLayout
+          activeMainSection={activeMainSection}
+          onMainSectionChange={setActiveMainSection}
+          sidebarSlot={
+            <SettingsSidebar 
+              activeSection={activeSettingsSection}
+              onSectionChange={setActiveSettingsSection}
+            />
+          }
+          contentSlot={
+            <PricingPlansPage />
           }
         />
       )}

@@ -3,8 +3,8 @@ import { Avatar } from "@/components/ui/shared";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/shared";
 
 interface AppSidebarProps {
-  activeMainSection?: "inbox" | "channels" | "metrics" | "contacts" | "ai_center";
-  onMainSectionChange?: (section: "inbox" | "channels" | "metrics" | "contacts" | "ai_center") => void;
+  activeMainSection?: "inbox" | "channels" | "metrics" | "contacts" | "ai_center" | "admin" | "settings";
+  onMainSectionChange?: (section: "inbox" | "channels" | "metrics" | "contacts" | "ai_center" | "admin" | "settings") => void;
 }
 
 export function AppSidebar({ activeMainSection = "inbox", onMainSectionChange }: AppSidebarProps) {
@@ -76,6 +76,18 @@ export function AppSidebar({ activeMainSection = "inbox", onMainSectionChange }:
             </TooltipTrigger>
             <TooltipContent side="right">AI Center</TooltipContent>
           </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={() => onMainSectionChange?.("admin")}
+                className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${activeMainSection === 'admin' ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+              >
+                <i className="ri-shield-user-line text-lg"></i>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Admin</TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </div>
 
@@ -83,7 +95,10 @@ export function AppSidebar({ activeMainSection = "inbox", onMainSectionChange }:
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+              <button 
+                onClick={() => onMainSectionChange?.("settings")}
+                className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${activeMainSection === 'settings' ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
+              >
                 <i className="ri-settings-4-line text-lg"></i>
               </button>
             </TooltipTrigger>
